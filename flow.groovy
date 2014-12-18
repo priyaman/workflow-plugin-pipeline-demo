@@ -1,18 +1,18 @@
 def devQAStaging() {
     env.PATH="${tool 'Maven 3.x'}/bin:${env.PATH}"
     stage 'Dev'
-    sh 'mvn -o clean package'
+    sh 'mvn clean package'
     archive 'target/x.war'
 
     stage 'QA'
 
     parallel(longerTests: {
         runWithServer {url ->
-            sh "mvn -o -f sometests/pom.xml test -Durl=${url} -Dduration=30"
+            sh "mvn -f sometests/pom.xml test -Durl=${url} -Dduration=30"
         }
     }, quickerTests: {
         runWithServer {url ->
-            sh "mvn -o -f sometests/pom.xml test -Durl=${url} -Dduration=20"
+            sh "mvn -f sometests/pom.xml test -Durl=${url} -Dduration=20"
         }
     })
     stage name: 'Staging', concurrency: 1
