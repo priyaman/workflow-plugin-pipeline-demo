@@ -1,10 +1,10 @@
 tomcatHost = 'localhost'
 tomcatPort = '8180'
-appHost = 'http://${tomcatHost}:${tomcatPort}'
+appHost = "http://${tomcatHost}:${tomcatPort}"
 tomcatUser = 'admin'
 tomcatPassword = 'tomcat'
-tomcatDeployUrl = 'http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/deploy'
-tomcatUndeployUrl = 'http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/undeploy'
+tomcatDeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/deploy"
+tomcatUndeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/undeploy"
 
 def devQAStaging() {
     env.PATH="${tool 'Maven 3.x'}/bin:${env.PATH}"
@@ -45,7 +45,7 @@ def production() {
 
 def deploy(war, id) {
     //sh "cp ${war} /tmp/webapps/${id}.war"
-    sh "curl ${war} '${tomcatDeployUrl}?path=/${id}&update=true'"
+    sh "curl --upload-file ${war} \'${tomcatDeployUrl}?path=/${id}&update=true\'"
 }
 
 def undeploy(id) {
