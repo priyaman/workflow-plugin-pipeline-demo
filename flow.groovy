@@ -1,3 +1,11 @@
+String tomcatHost = "localhost"
+String tomcatPort = "8180"
+String appHost = "http://${tomcatHost}:${tomcatPort}"
+String tomcatUser = "admin"
+String tomcatPassword = "tomcat"
+String tomcatDeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/deploy"
+String tomcatUndeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/undeploy"
+
 def devQAStaging() {
     env.PATH="${tool 'Maven 3.x'}/bin:${env.PATH}"
     stage 'Dev'
@@ -20,7 +28,7 @@ def devQAStaging() {
 }
 
 def production() {
-    input message: "Does http://localhost:8080/staging/ look good?"
+    input message: "Does ${appHost}/staging/ look good?"
     try {
         checkpoint('Before production')
     } catch (NoSuchMethodError _) {
@@ -28,26 +36,28 @@ def production() {
     }
     stage name: 'Production', concurrency: 1
     node('master') {
-        sh 'curl -I http://localhost:8080/staging/'
+        sh 'curl -I ${appHost}/staging/'
         unarchive mapping: ['target/x.war' : 'x.war']
         deploy 'x.war', 'production'
-        echo 'Deployed to http://localhost:8080/production/'
+        echo 'Deployed to ${appHost}/production/'
     }
 }
 
 def deploy(war, id) {
-    sh "cp ${war} /tmp/webapps/${id}.war"
+    //sh "cp ${war} /tmp/webapps/${id}.war"
+    sh "curl ${war} '${tomcatDeployUrl}?path=/${id}&update=true'"
 }
 
 def undeploy(id) {
-    sh "rm /tmp/webapps/${id}.war"
+    //sh "rm /tmp/webapps/${id}.war"
+    sh "curl '${tomcatUndeployUrl}?path=/${id}'"
 }
 
 def runWithServer(body) {
     def id = UUID.randomUUID().toString()
     deploy 'target/x.war', id
     try {
-        body.call "http://localhost:8080/${id}/"
+        body.call "${appHost}/${id}/"
     } finally {
         undeploy id
     }
