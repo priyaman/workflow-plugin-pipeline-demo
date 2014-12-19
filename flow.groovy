@@ -1,10 +1,10 @@
-def tomcatHost = "localhost"
-def tomcatPort = "8180"
-def appHost = "http://${tomcatHost}:${tomcatPort}"
-def tomcatUser = "admin"
-def tomcatPassword = "tomcat"
-def tomcatDeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/deploy"
-def tomcatUndeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/undeploy"
+def tomcatHost = 'localhost'
+def tomcatPort = '8180'
+def appHost = 'http://${tomcatHost}:${tomcatPort}'
+def tomcatUser = 'admin'
+def tomcatPassword = 'tomcat'
+def tomcatDeployUrl = 'http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/deploy'
+def tomcatUndeployUrl = 'http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/undeploy'
 
 def devQAStaging() {
     env.PATH="${tool 'Maven 3.x'}/bin:${env.PATH}"
