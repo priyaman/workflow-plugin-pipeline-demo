@@ -36,7 +36,7 @@ def production() {
     }
     stage name: 'Production', concurrency: 1
     node('master') {
-        sh 'curl -I ${appHost}/staging/'
+        sh "curl -I ${appHost}/staging/"
         unarchive mapping: ['target/x.war' : 'x.war']
         deploy 'x.war', 'production'
         echo 'Deployed to ${appHost}/production/'
