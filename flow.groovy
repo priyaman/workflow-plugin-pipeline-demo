@@ -39,17 +39,15 @@ def production() {
         sh "curl -I ${appHost}/staging/"
         unarchive mapping: ['target/x.war' : 'x.war']
         deploy 'x.war', 'production'
-        echo 'Deployed to ${appHost}/production/'
+        echo "Deployed to ${appHost}/production/"
     }
 }
 
 def deploy(war, id) {
-    //sh "cp ${war} /tmp/webapps/${id}.war"
-    sh "curl --upload-file ${war} \'${tomcatDeployUrl}?path=/${id}&update=true\'"
+    sh "curl --upload-file ${war} '${tomcatDeployUrl}?path=/${id}&update=true'"
 }
 
 def undeploy(id) {
-    //sh "rm /tmp/webapps/${id}.war"
     sh "curl '${tomcatUndeployUrl}?path=/${id}'"
 }
 
