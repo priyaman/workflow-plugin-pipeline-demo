@@ -13,6 +13,7 @@ node('slave') {
     sh 'mvn clean package'
     archive 'target/x.war'
 
+    echo 'Entering into QA stage'
     stage 'QA'
 
     parallel(longerTests: {
