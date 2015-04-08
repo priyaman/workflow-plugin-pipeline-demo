@@ -7,6 +7,7 @@ tomcatDeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcat
 tomcatUndeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/undeploy"
 
 node('slave') {
+    git url: 'https://github.com/jenkinsbyexample/workflow-plugin-pipeline-demo.git'
     env.PATH="${tool 'Maven 3.x'}/bin:${env.PATH}"
     stage 'Dev'
     sh 'mvn clean package'
