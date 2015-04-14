@@ -54,8 +54,8 @@ def production() {
     node('master') {
         sh "curl -I ${appHost}/staging/"
         // Parameters in an array doesn't seem to work. Throws java.lang.ClassCastException: org.codehaus.groovy.runtime.GStringImpl cannot be cast to java.lang.String
-        //unarchive mapping: ['target/webapp.war' : 'webapp.war']
-        unarchive mapping: ["target/${artifactName}" : "${artifactName}"]
+        //unarchive mapping: ["target/${artifactName}" : "${artifactName}"]
+        unarchive mapping: ['target/webapp.war' : 'webapp.war']
         deploy "${artifactName}", 'production'
         echo "Deployed to ${appHost}/production/"
     }
