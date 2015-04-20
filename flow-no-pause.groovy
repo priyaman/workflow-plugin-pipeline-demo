@@ -87,7 +87,7 @@ def smokeTest(id) {
     sh "curl --write-out %{http_code} --silent -iL --output /dev/null http://web.cloudbees.vlan:8180/${id} > result"
     def result = readFile('result')
     echo "${result}"
-    if ( result != 200 ) {
-       error "Smoke test failed with error code ${result}"
+    if ( result > 200 ) {
+       error "Smoke test failed with error code [${result}]"
     }
 }
