@@ -84,10 +84,17 @@ def runWithServer(body) {
 }
 
 def smokeTest(id) {
-    sh "curl --write-out %{http_code} --silent -iL --output /dev/null http://web.cloudbees.vlan:8180/${id} > result"
-    def result = readFile('result')
-    echo "${result}"
-    if ( result > 200 ) {
-       error "Smoke test failed with error code [${result}]"
+    sh "curl --write-out %{http_code} --silent -iL --output /dev/null ${appHost}/${id} > result"
+    def httpCode = readFile('result')
+    echo "Returned HTTP-${httpCode}"
+    
+    if (httpCode.isNumber()) {
+        code = httpCode as int
+        if ( code > 200 ) {
+           error "Smoke test failed HTTP - [${httpCode}]"
+        }
+    }
+    else {
+        error "Smoke test failed HTTP - [${httpCode}]"
     }
 }
