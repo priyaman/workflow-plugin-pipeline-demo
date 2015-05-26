@@ -44,8 +44,11 @@ def devQAStaging() {
 }
 
 def production() {
-    echo "Build URL is ${env.BUILD_URL}input/ApprovalAppnameDeployment/submit"
+    // Email a link to approvers. 
+    // When integrating with external applications, this is where you'd pass the necessary data to be able to resume the job.
     mail body: "Please go to ${env.BUILD_URL}input/", from: 'uaarkoti@cloudbees.com', replyTo: 'uday@cloudbees.com', subject: "Job ${env.JOB_NAME} build #${env.BUILD_NUMBER} is waiting for your approval", to: 'uaarkoti@cloudbees.com'
+
+    // Pause the workflow. You can resume this workflow from with in Jenkins or from an external application using HTTP REST API call.
     input id: 'ApprovalAppnameDeployment', message: 'Please approve as appropriate', ok: 'Approve', parameters: [[$class: 'StringParameterDefinition', defaultValue: 'Approved', description: '', name: 'comments']]
     try {
         checkpoint('Before production')
