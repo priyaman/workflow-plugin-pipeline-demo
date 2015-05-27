@@ -7,6 +7,9 @@ tomcatDeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcat
 tomcatUndeployUrl = "http://${tomcatUser}:${tomcatPassword}@${tomcatHost}:${tomcatPort}/manager/undeploy"
 artifactName='webapp.war'
 
+// If JAVA_HOME is not set, this is an easy way to setup JAVA_HOME from within the workflow
+// Comment this out if JAVA_HOME is already set
+env.JAVA_HOME='/usr/lib/jvm/java-openjdk'
 node('master') {
    git url: 'https://github.com/jenkinsbyexample/workflow-plugin-pipeline-demo.git'
    devQAStaging()
@@ -44,11 +47,24 @@ def devQAStaging() {
 }
 
 def production() {
+
+    // When integrating with external application, before pausing the workflow, send all the contextual data
+    // such that the external application can trigger the resume event.
+    // Contextual data should include, URL (as shown below), user data (for authentication and authorization), form data (if workflow requires additional data to continue)
+    echo "Build URL is ${env.BUILD_URL}input/ApprovalAppnameDeployment/submit"
+
     // Email a link to approvers. 
     // When integrating with external applications, this is where you'd pass the necessary data to be able to resume the job.
-    mail body: "Please go to ${env.BUILD_URL}input/", from: 'uaarkoti@cloudbees.com', replyTo: 'uday@cloudbees.com', subject: "Job ${env.JOB_NAME} build #${env.BUILD_NUMBER} is waiting for your approval", to: 'uaarkoti@cloudbees.com'
+    // mail body: "Please go to ${env.BUILD_URL}input/", from: 'uaarkoti@cloudbees.com', replyTo: 'uday@cloudbees.com', subject: "Job ${env.JOB_NAME} build #${env.BUILD_NUMBER} is waiting for your approval", to: 'uaarkoti@cloudbees.com'
 
     // Pause the workflow. You can resume this workflow from with in Jenkins or from an external application using HTTP REST API call.
+    // Sample CURL command to resume with form data: 
+    //    curl --data "name=comments&value=Approved&json=%7B%22parameter%22%3A+%7B%22name%22%3A+%22comments%22%2C+%22value%22%3A+%22Approved%22%7D%7D&proceed=Approve" http://uday:uday@localhost:8081/job/workflow-integration/16/input/ApprovalAppnameDeployment/submit
+    //    NOTE: json parameter (with encoded url) is only required if the workflow expects input to continue, which is the case with the below input step
+    // Sample CURL command to resume without form data
+    //    curl -X POST http://uday:uday@localhost:8081/job/workflow-integration/16/input/ApprovalAppnameDeployment/proceedEmpty
+    // Sample CURL command to abort without form data
+    //    curl -X POST http://uday:uday@localhost:8081/job/workflow-integration/16/input/ApprovalAppnameDeployment/abort
     input id: 'ApprovalAppnameDeployment', message: 'Please approve as appropriate', ok: 'Approve', parameters: [[$class: 'StringParameterDefinition', defaultValue: 'Approved', description: '', name: 'comments']]
     try {
         checkpoint('Before production')
