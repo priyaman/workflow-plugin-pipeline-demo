@@ -58,9 +58,10 @@ def production() {
 
     // Pause the workflow. You can resume this workflow from with in Jenkins or from an external application using HTTP REST API call.
     // Sample CURL command to resume the following input step
-    //    curl --data "name=comments&value=Approved&json=%7B%22parameter%22%3A+%7B%22name%22%3A+%22comments%22%2C+%22value%22%3A+%22Approved%22%7D%7D&proceed=Approve" http://uday:uday@localhost:8081/job/workflow-integration/16/input/ApprovalAppnameDeployment/submit
-    //    NOTE: json parameter (with encoded url) is only required if the workflow expects input to continue, which is the case with the below following step
-    input id: 'ApprovalAppnameDeployment', message: 'Please approve as appropriate', ok: 'Approve', parameters: [[$class: 'StringParameterDefinition', defaultValue: 'Approved', description: '', name: 'comments']]
+    //    curl -X POST http://uday:uday@localhost:8081/job/workflow-integration/16/input/ApprovalAppnameDeployment/proceedEmpty
+    // Sample CURL command to abort the following input step
+    //    curl -X POST http://uday:uday@localhost:8081/job/workflow-integration/16/input/ApprovalAppnameDeployment/abort
+    input id: 'ApprovalAppnameDeployment', message: 'Please approve'
     try {
         checkpoint('Before production')
     } catch (NoSuchMethodError _) {
