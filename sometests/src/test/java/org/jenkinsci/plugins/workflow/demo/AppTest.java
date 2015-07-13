@@ -15,7 +15,7 @@ public class AppTest extends Assert {
         URL app = getSUT();
         String contents = IOUtils.toString(app.openStream());
         assertTrue(contents.contains("Hello Jenkins!"));
-
+		
         // this is supposed to be an integration test,
         // let's take some time. We want this to be longer than the build for sure.
         Thread.sleep(Integer.getInteger("duration", 30) * 1000);
@@ -23,6 +23,7 @@ public class AppTest extends Assert {
 
     private URL getSUT() throws Exception {
         String url = System.getProperty("url");
+		System.out.println(url);
         assertTrue("Subject under test should be passed in via -Durl=...", url!=null);
         return new URL(url);
     }
